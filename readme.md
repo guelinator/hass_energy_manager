@@ -18,7 +18,8 @@ Für beide Werte empfiehlt es sich einen mean-filter-sensor zu verwenden, das ni
             window_size: "00:05"
             precision: 0
 
-
+Leistungsbedarf
+---
 Geräte müssen einen "Leistungsbedarf" anmelden.
 Folgende sensoren können dazu verwendet werden:
 - sensor.leistungsbedarf_{name}
@@ -37,12 +38,18 @@ Das erste Gerät das gefunden wird, wird verwendet, falls mehrere vorhanden sind
 
 Pro Gerät kann eine Priorität festgelegt werden. Das Gerät mit der höchsten Priorität das einen Bedarf anmeldet wird als erstes eingeschaltet, und das Gerät mit der geringsten Priorität wird als erstes ausgeschaltet, wenn zu wenig PV Leistung vorhanden ist.
 
+Priorität
+---
+
 Die Priorität kann mit folgenden Entitäten festgelegt werden:
 - input_number.prioritat_{name}
 - sensor.prioritat_{name}
 Die Werte sollen im Bereich -100 bis +100 sein.
 
 Pro Gerät kann auch eine Mindest-Dauer festgelegt werden, die das Gerät eingeschaltet bleiben muss.
+
+Dauer
+---
 
 Die Dauer kann mit folgenden Entitäten festgelegt werden:
 - input_number.dauer_{name}
