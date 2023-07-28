@@ -3,10 +3,10 @@
   trigger:
   - platform: time_pattern
     minutes: /5
-  condition:
-  - condition: state
-    entity_id: input_select.energiemanagement_modus
-    state: "PV"
+#  condition:
+#  - condition: state
+#    entity_id: input_select.energiemanagement_modus
+#    state: "PV"
   action:
   - service: script.energiemanagemenet_ausfuhren
     data:
