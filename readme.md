@@ -1,4 +1,4 @@
-Energy Manager
+Energiemanagement
 ----
 
 Das Energiemanagement dient dazu Geräte bei vorhandenem PV Strom ein-, und bei wenig PV Strom aus-zuschalten.
