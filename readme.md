@@ -3,6 +3,18 @@ Energiemanagement
 
 Das Energiemanagement dient dazu Geräte bei vorhandenem PV Strom ein-, und bei wenig PV Strom aus-zuschalten.
 
+Installation
+---
+energiemanagment_pv.yaml
+Der Inhalt dieser Datei gehört in automations.yaml oder in ein file falls man "split configuration" verwendet.
+
+script_energiemanagement_ausfuehren.yaml:
+Der Inhalt dieser Datei gehört in scripts.yaml oder ein in file falls man "split configuration" verwendet.
+
+
+Grundlagen
+---
+
 Diese Werte werden mindestens für das Energiemanagement benötigt:
 - sensor.energiemanagement_photovoltaik
 - sensor.energiemanagement_verbrauch
@@ -17,14 +29,6 @@ Für beide Werte empfiehlt es sich einen mean-filter-sensor zu verwenden, das ni
           - filter: time_simple_moving_average
             window_size: "00:05"
             precision: 0
-
-Installation
----
-energiemanagment_pv.yaml
-Der Inhalt dieser Datei gehört in automations.yaml oder in ein file falls man "split configuration" verwendet.
-
-script_energiemanagement_ausfuehren.yaml:
-Der Inhalt dieser Datei gehört in scripts.yaml oder ein in file falls man "split configuration" verwendet.
 
 Leistungsbedarf
 ---
