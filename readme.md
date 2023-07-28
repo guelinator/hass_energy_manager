@@ -40,7 +40,7 @@ Pro Gerät kann eine Priorität festgelegt werden. Das Gerät mit der höchsten 
 Die Priorität kann mit folgenden Entitäten festgelegt werden:
 - input_number.prioritat_{name}
 - sensor.prioritat_{name}
-
+Die Werte sollen im Bereich -100 bis +100 sein.
 
 Pro Gerät kann auch eine Mindest-Dauer festgelegt werden, die das Gerät eingeschaltet bleiben muss.
 
