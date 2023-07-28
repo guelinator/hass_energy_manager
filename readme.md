@@ -9,12 +9,12 @@ Diese Werte werden mindestens für das Energiemanagement benötigt:
 
 Es empfiehlt sich einfach einen Template-Sensor zu erstellen, um die eigenen Werte auf die Werte des Energiemanagements zu spiegeln. z.B. so:
 
-  - name: "Energiemanagement Photovoltaik"
-    unique_id: "energiemanagement_photovoltaik"
-    unit_of_measurement: "W"
-    icon: mdi:arrow-decision-auto
-    state: >
-      {{ states("sensor.leistung_pv_gemittelt") }}
+    - name: "Energiemanagement Photovoltaik"
+      unique_id: "energiemanagement_photovoltaik"
+      unit_of_measurement: "W"
+      icon: mdi:arrow-decision-auto
+      state: >
+        {{ states("sensor.leistung_pv_gemittelt") }}
 
 
 Geräte müssen einen "Leistungsbedarf" anmelden.
