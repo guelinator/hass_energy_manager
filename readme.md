@@ -31,4 +31,18 @@ Um die Geräte schalten zu können, ist eine der folgenden Entitäten notwendig:
 - switch.schalte_{name}
 - input_boolean.schalte_{name}
 
-Das erste Gerät das gefunden wird, wird verwendet, falls mehrere möglich sind
+Das erste Gerät das gefunden wird, wird verwendet, falls mehrere vorhanden sind.
+
+Pro Gerät kann eine Priorität festgelegt werden. Das Gerät mit der höchsten Priorität das einen Bedarf anmeldet wird als erstes eingeschaltet, und das Gerät mit der geringsten Priorität wird als erstes ausgeschaltet, wenn zu wenig PV Leistung vorhanden ist.
+
+Die Priorität kann mit folgenden Entitäten festgelegt werden:
+- input_number.prioritat_{name}
+- sensor.prioritat_{name}
+
+
+Pro Gerät kann auch eine Mindest-Dauer festgelegt werden, die das Gerät eingeschaltet bleiben muss.
+
+Die Dauer kann mit folgenden Entitäten festgelegt werden:
+- input_number.dauer_{name}
+- sensor.dauer_{name}
+
