@@ -25,7 +25,7 @@ Folgende sensoren können dazu verwendet werden:
 - input_number.leistungsbedarf_{name}
 
 Diese Entitäten müssen sich in der Area "Energiemanagement" befinden, damit sie vom Energiemanagement gefunden werden.
-{NAME} steht immer für ein Gerät. Dieser Name wird noch weitere male verwendet.
+{name} steht immer für ein Gerät. Dieser Name wird noch weitere male verwendet. z.b. sensor.leistungsbedarf_pool
 
 Um die Geräte schalten zu können, ist eine der folgenden Entitäten notwendig:
 - switch.schalte_{name}_em
