@@ -63,9 +63,21 @@ Die Dauer kann mit folgenden Entitäten festgelegt werden:
 Beispiel
 ---
 
+Beispiel 1:
+
 | entität | wert | area |
 |---------|------|------|
 | sensor.leistungsbedarf_pool| 900 | Energiemanagement |
 | input_boolean.schalte_pool_em | false | egal |
 | input_number.prioritat_pool | 3 | egal |
 | input_number.dauer_pool | 3.0 | egal |
+
+
+Beispiel 2:
+
+| entität | wert | area |
+|---------|------|------|
+| input_number.leistungsbedarf_pool| 900 | Energiemanagement |
+| switch.schalte_pool | false | egal |
+| sensor.prioritat_pool | 3 | egal |
+| sensor.dauer_pool | 3.0 | egal |
