@@ -50,12 +50,22 @@ Die Priorität kann mit folgenden Entitäten festgelegt werden:
 - sensor.prioritat_{name}
 Die Werte sollen im Bereich -100 bis +100 sein.
 
-Pro Gerät kann auch eine Mindest-Dauer festgelegt werden, die das Gerät eingeschaltet bleiben muss.
-
 Dauer
 ---
+
+Pro Gerät kann auch eine Mindest-Dauer (in Stunden) festgelegt werden, die das Gerät eingeschaltet bleiben muss.
 
 Die Dauer kann mit folgenden Entitäten festgelegt werden:
 - input_number.dauer_{name}
 - sensor.dauer_{name}
 
+
+Beispiel
+---
+
+| entität | wert |
+|---------|------|
+| sensor.leistungsbedarf_pool| 900 |
+| input_boolean.schalte_pool_em | false |
+| input_number.prioritat_pool | 3 |
+| input_number.dauer_pool | 3.0 |
