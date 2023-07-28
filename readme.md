@@ -28,6 +28,10 @@ Folgende sensoren können dazu verwendet werden:
 Diese Entitäten müssen sich in der Area "Energiemanagement" befinden, damit sie vom Energiemanagement gefunden werden.
 {name} steht immer für ein Gerät. Dieser Name wird noch weitere male verwendet. z.b. sensor.leistungsbedarf_pool
 
+
+Schalter
+---
+
 Um die Geräte schalten zu können, ist eine der folgenden Entitäten notwendig:
 - switch.schalte_{name}_em
 - input_boolean.schalte_{name}_em
@@ -36,10 +40,10 @@ Um die Geräte schalten zu können, ist eine der folgenden Entitäten notwendig:
 
 Das erste Gerät das gefunden wird, wird verwendet, falls mehrere vorhanden sind.
 
-Pro Gerät kann eine Priorität festgelegt werden. Das Gerät mit der höchsten Priorität das einen Bedarf anmeldet wird als erstes eingeschaltet, und das Gerät mit der geringsten Priorität wird als erstes ausgeschaltet, wenn zu wenig PV Leistung vorhanden ist.
-
 Priorität
 ---
+
+Pro Gerät kann eine Priorität festgelegt werden. Das Gerät mit der höchsten Priorität das einen Bedarf anmeldet wird als erstes eingeschaltet, und das Gerät mit der geringsten Priorität wird als erstes ausgeschaltet, wenn zu wenig PV Leistung vorhanden ist.
 
 Die Priorität kann mit folgenden Entitäten festgelegt werden:
 - input_number.prioritat_{name}
