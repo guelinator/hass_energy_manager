@@ -18,6 +18,14 @@ Für beide Werte empfiehlt es sich einen mean-filter-sensor zu verwenden, das ni
             window_size: "00:05"
             precision: 0
 
+Installation
+---
+energiemanagment_pv.yaml
+Der Inhalt dieser Datei gehört in automations.yaml oder in ein file falls man "split configuration" verwendet.
+
+script_energiemanagement_ausfuehren.yaml:
+Der Inhalt dieser Datei gehört in scripts.yaml oder ein in file falls man "split configuration" verwendet.
+
 Leistungsbedarf
 ---
 Geräte müssen einen "Leistungsbedarf" anmelden.
