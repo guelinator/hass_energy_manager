@@ -59,6 +59,12 @@ Die Dauer kann mit folgenden Entitäten festgelegt werden:
 - input_number.dauer_{name}
 - sensor.dauer_{name}
 
+Energiemanagement-Card
+---
+
+Wenn man den Code von command: der datei energiemanagement_pv.yaml nimmt, die spaces davor löscht, und
+    {% set debug = true -%}
+einträgt, dann kann man den Content in eine Markdown-Card geben, und sieht somit was das Energiemanagement macht.
 
 Beispiel
 ---
