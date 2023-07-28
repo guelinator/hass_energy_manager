@@ -1,0 +1,17 @@
+alias: Energiemanagemenet ausführen
+fields:
+  command:
+    name: Kommando
+    description: Das Kommando auszuführen
+    example: on:input_boolean.schalte_ladegerate_em
+    default: on:input_boolean.schalte_ladegerate_em
+    selector:
+      text:
+        multiline: true
+sequence:
+- service: "{% set tmp = command.split(\":\") %}\n{% if tmp[1].startswith(\"input_boolean\")
+    %}\n  input_boolean.turn_{{tmp[0].strip(\" \")}}\n{% else %}\n  switch.turn_{{
+    tmp[0].strip(\" \") }}\n{% endif %}  \n"
+  data: {}
+  target:
+    entity_id: '{{ command.split(":")[1] }}
