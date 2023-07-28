@@ -7,14 +7,16 @@ Diese Werte werden mindestens für das Energiemanagement benötigt:
 - sensor.energiemanagement_photovoltaik
 - sensor.energiemanagement_verbrauch
 
-Es empfiehlt sich einfach einen Template-Sensor zu erstellen, um die eigenen Werte auf die Werte des Energiemanagements zu spiegeln. z.B. so:
-
-    - name: "Energiemanagement Photovoltaik"
-      unique_id: "energiemanagement_photovoltaik"
-      unit_of_measurement: "W"
-      icon: mdi:arrow-decision-auto
-      state: >
-        {{ states("sensor.leistung_pv_gemittelt") }}
+Für beide Werte empfiehlt es sich einen mean-filter-sensor zu verwenden, das nicht jedes Wölkchen die Geräte aus/einschaltet. Das Energiemenagement wird alle 5 Minuten ausgeführt, und deswegen sollten auch die mean-filter 5 min als zeitfenster haben.
+      
+      - platform: filter
+        name: "Energiemanagement Photovoltaik"
+        unique_id: "energiemanagement_photovoltaik"
+        entity_id: sensor.leistung_pv_raw
+        filters:
+          - filter: time_simple_moving_average
+            window_size: "00:05"
+            precision: 0
 
 
 Geräte müssen einen "Leistungsbedarf" anmelden.
