@@ -1,0 +1,162 @@
+- id: "auto_energiemanagement_pv"
+  alias: Energiemanagement PV
+  trigger:
+  - platform: time_pattern
+    minutes: /5
+  condition:
+  - condition: state
+    entity_id: input_select.energiemanagement_modus
+    state: "PV"
+  action:
+  - service: script.energiemanagemenet_ausfuhren
+    data:
+      command: >
+        {% set debug = false %}
+        {# ***** MANDATORY ******* -#}
+        {% set pv_leistung = states("sensor.energiemanagement_photovoltaik") | float -%}
+        {% set verbrauch = states("sensor.energiemanagement_verbrauch") | float -%}
+        {# ***** Optional ******* -#}
+        {% set soc = states("sensor.state_of_charge_fronius_storage_0_192_168_1_12") -%}
+        {% set sicherheit = states("input_number.energiemanagement_reserve") -%}
+        {% set ueberschuss_kwh = states("sensor.energiemanagement_uberschuss") -%}
+        {% set min_ueberschuss_kwh = states("input_number.energiemanagement_minimum_uberschuss") -%}
+        {% set batterie_prio = states("input_boolean.energiemanagement_batterie_prioritats_modus") == "on" %}
+
+        {# Verarbeite variablen, und setze auf default, falls nicht gefunden -#}
+        {% if ueberschuss_kwh.startswith("un") %}{% set ueberschuss_kwh = 0 -%}{% else %}{% set ueberschuss_kwh = ueberschuss_kwh | float %}{% endif -%}
+        {% if min_ueberschuss_kwh.startswith("un") %}{% set min_ueberschuss_kwh = 0 %}{%else %}{% set min_ueberschuss_kwh = min_ueberschuss_kwh | float %}{% endif -%}
+        {% if sicherheit.startswith("un") %}{% set sicherheit = 0 %}{%else %}{% set sicherheit = sicherheit | float %}{% endif -%}
+        {% if soc.startswith("un") %}{% set soc = 0 %}{%else %}{% set soc = soc | float %}{% endif -%}
+
+        {% set extra = "" %}
+        {% set ueberschuss =  pv_leistung - (verbrauch + sicherheit)  -%}
+        {% set entries = {
+          "prioritat":["input_number.prioritat_{name}", "sensor.prioritat_{name}"],
+          "switch": ["input_boolean.schalte_{name}","switch.schalte_{name}","input_boolean.schalte_{name}_em","switch.schalte_{name}_em"],
+          "dauer": ["input_number.dauer_{name}","sensor.dauer_{name}"]
+          }
+        -%}
+
+        {# Berechnen ob genüg Überschuss in kWh da ist, um sachen an zu lassen #}
+        {% if ueberschuss < 0 and ueberschuss_kwh > min_ueberschuss_kwh -%}
+          {% set ueberschuss = 0 -%}
+          {% set extra = extra + "An lassen bei Energie Überschuss. Überschuss auf 0 gesetzt, da Überschuss in Kwh über "+ min_ueberschuss_kwh | string + " ist. war = " + ueberschuss | string + " W " -%}
+        {% endif -%}
+
+        {% if batterie_prio and ueberschuss > 0 and ueberschuss_kwh < min_ueberschuss_kwh and soc < 90.0 -%}
+          {% set extra = extra + "Batterie Prioritäts Modus. Überschuss auf 0 gesetzt, da Überschuss in Kwh unter "+ min_ueberschuss_kwh | string + " ist. war = " + ueberschuss | string + " W" -%}
+          {% set ueberschuss = 0 -%}
+        {% endif -%}
+
+        {% set active = namespace({
+          "switch": "dummy",
+          "name": "dummy",
+          "prioritat": -999,
+          "prioritat_str": "x",
+          "what":"null",
+          }) 
+        -%}
+        {% if debug -%}
+        Energiemanagement PV
+        ======
+
+        Angaben
+        ----
+
+        | name | sensor | wert |
+        |:-----|:-------|:-----|
+        | pv_leistung | sensor.energiemanagement_photovoltaik | {{ pv_leistung  | round(1)}} W |
+        | verbrauch | sensor.energiemanagement_verbrauch | {{ verbrauch  | round(1)}} W |
+        | &nbsp; | &nbsp; | &nbsp; |
+        | reserve | input_number.energiemanagement_reserve | {{ sicherheit | round(1)}} W |
+        | state of charge | sensor.state_of_charge_fronius_storage_0_192_168_1_12 | {{ soc | round(1)}} % |
+        | ueberschuss | pv_leistung - (verbrauch + reserve) | {{ ueberschuss | round(1) }} W |
+        | ueberschuss energie | sensor.energiemanagement_uberschuss | {{ ueberschuss_kwh | round(1) }} kWh |
+        | batterie priorität | input_boolean.energiemanagement_batterie_prioritats_modus | {{ batterie_prio }} |
+
+        {% if extra != "" %}
+        {{ extra }}
+        {% endif %}
+
+        Geräte
+        ---
+
+        | name | bedarf | status | prio | dauer | action |
+        |------|--------|--------|------|-------|--------|
+        {% endif -%}
+        {% for entity in area_entities("Energiemanagement") -%}
+        {# ******* FOR ENTITY ******* -#}
+        {% set ns = namespace({"prioritat":0,"dauer":0.5,"state":"undefined","prioritat_str":"x"}) -%}
+        {% set ns.leistungsbedarf = ("0"+states(entity)) | int -%}
+        {# strip name -#}
+        {% set name = entity.split(".")[1][16:] -%}
+        {% for typename in entries -%}
+          {% for tmp in entries[typename] -%}
+            {% set fullname = tmp.replace("{name}",name) -%}
+            {% set ns.name = name -%}
+            {% set tmpstate = states(fullname) -%}
+            {% if tmpstate != "unknown" -%}
+              {% if typename == "switch" -%}
+                {% set ns.switch = fullname -%}
+                {% set ns.state = tmpstate -%}
+              {% elif typename == "prioritat" -%}
+                {% set ns.prioritat = tmpstate | int -%}
+                {% set ns.prioritat_str = tmpstate -%}
+              {% elif typename == "dauer" -%}
+                {% set ns.dauer = tmpstate | float -%}
+              {% endif -%}
+            {% endif -%}
+          {% endfor -%}
+        {% endfor -%}
+        {% if ns.state == "on" -%}
+          {% set ns.prioritat_str = ns.prioritat | string + " ("+(500-ns.prioritat) | string + ")" -%}
+          {% set ns.prioritat = 500- ns.prioritat -%}
+        {% endif -%}
+        {% set copy = false -%}
+        {% set what = "null" -%}
+        {% set debuginfo = "nothing" -%}
+        {% set state_dauer = (now() - states[ns.switch].last_changed).total_seconds() / (60*60) -%}
+        {% if ns.state == "off" %}{% set state_dauer = 24 %}{% endif -%}
+        {% if ns.leistungsbedarf > 0 and ns.state == "off" and ns.prioritat > active.prioritat -%}
+          {% if ueberschuss > ns.leistungsbedarf -%}
+            {# TURN ON -#}
+            {% set copy = true -%}
+            {% set what = "on" -%}
+            {% set debuginfo = "turn on" -%}
+          {% else -%}
+            {# priorität und name merken für andere und infos setzen. priorität geht vor passender leistung -#}
+            {% set what = "null" -%}
+            {% set copy = false -%}
+            {% set debuginfo = "warte auf mehr pv" -%}
+            {% set active.prioritat = ns.prioritat -%}
+            {% set active.name = ns.name -%}
+          {% endif -%}
+        {% elif (ns.state == "on") and (ns.leistungsbedarf <= 0 or ueberschuss < 0) and (ns.prioritat > active.prioritat) and (state_dauer > ns.dauer) -%}
+          {% set copy = true -%}
+          {% set what = "off" -%}
+          {% set debuginfo = "turn off" -%}
+        {% else -%}
+          {% if state_dauer < ns.dauer -%}
+            {% set debuginfo = "status dauer ist zu kurz " + state_dauer | round(1) | string + " von " + ns.dauer | string + " h" -%}
+          {% elif ns.leistungsbedarf == 0 -%}
+            {% set debuginfo = "kein bedarf" -%}
+          {% elif ns.leistungsbedarf > 0 and ns.state == "on" -%}
+            {% set debuginfo = "bleibt an" -%}
+          {% elif ueberschuss == 0 -%}
+            {% set debuginfo = "überschuss" -%}
+          {% elif ueberschuss < ns.leistungsbedarf -%}
+            {% set debuginfo = "zu wenig pv" -%}
+          {% elif active.prioritat > ns.prioritat -%}
+            {% set debuginfo = active.name +" ist höher" -%}
+          {% endif -%}
+        {% endif -%}
+        {% if debug -%}| {{ ns.name }}&nbsp;&nbsp;&nbsp; | {{ ns.leistungsbedarf }} | {{ ns.state }} | {{ ns.prioritat_str }} | {{ ns.dauer }} | {{ debuginfo }} |{% endif %}
+        {% if copy -%}
+          {% set active.switch = ns.switch -%}
+          {% set active.prioritat = ns.prioritat -%}
+          {% set active.name = ns.name -%}
+          {% set active.what = what -%}
+        {% endif -%}
+        {# ******* END FOR *******-#}
+        {% endfor %}
+        {{ active.what + ":"+active.switch }}
